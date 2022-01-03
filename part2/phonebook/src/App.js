@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import numbersService from './services/numbers'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterTerms, setNewFilter] = useState('')
+  const [notificationMsg, setNotificationMsg] = useState([null, ''])
 
   const newNameHandler = (event) => setNewName(event.target.value)
   const newNumberHandler = (event) => setNewNumber(event.target.value)
@@ -23,7 +24,11 @@ const App = () => {
       }) 
   }, [])
 
-  console.log(persons)
+  const timeoutMsg = () => {
+    setTimeout(() => {
+      setNotificationMsg([null, ''])
+    }, 5000)
+  }
 
   const addNewName = (event) => {
     event.preventDefault()
@@ -44,6 +49,8 @@ const App = () => {
       numbersService
         .create(newNameObject)
         .then(returnedNote => {
+          setNotificationMsg([`Added ${newName}`, 'success'])
+          timeoutMsg()
           setPersons(persons.concat(returnedNote))
           setNewName('')
           setNewNumber('')
@@ -57,12 +64,15 @@ const App = () => {
     numbersService
       .update(person.id, updatedP)
       .then(returnedPerson => {
+        setNotificationMsg([`${person.name}'s number has been updated`, 'success'])
+        timeoutMsg()
         setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
         setNewName('')
         setNewNumber('')
       })
       .catch(error => {
-        alert(`${person.name} was already deleted`)
+        setNotificationMsg([`${person.name} was already deleted`, 'error'])
+        timeoutMsg()
         setPersons(persons.filter(p => p.id !== person.id))
       })
   } 
@@ -73,6 +83,11 @@ const App = () => {
       .then(
         setPersons(persons.filter(p => p.id !== id))
       )
+      .catch(error => {
+        setNotificationMsg([`That person was already deleted`, 'error'])
+        timeoutMsg()
+        setPersons(persons.filter(p => p.id !== id))
+      })
   }
 
   const filteredNames = persons.filter(person => 
@@ -84,6 +99,8 @@ const App = () => {
 
       <h2>Phonebook</h2>
       
+      <Notification message={notificationMsg} />
+
       <Filter 
         filterTerms={filterTerms}
         filterHandler={filterHandler}/>

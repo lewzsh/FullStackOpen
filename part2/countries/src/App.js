@@ -3,7 +3,6 @@ import axios from 'axios'
 import Search from './components/Search'
 import FilteredCountries from './components/FilteredCountries';
 
-
 function App() {
   const [countries, setCountries] = useState([])
   const [countrySearch, setSearch] = useState('')
