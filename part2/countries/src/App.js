@@ -7,8 +7,13 @@ import FilteredCountries from './components/FilteredCountries';
 function App() {
   const [countries, setCountries] = useState([])
   const [countrySearch, setSearch] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState('')
+  
 
-  const searchHandler = (event) => setSearch(event.target.value)
+  const searchHandler = (event) => {
+    setSearch(event.target.value)
+    setSelectedCountry('')
+  }
 
   const hook = () => {
     axios
@@ -18,6 +23,10 @@ function App() {
       })
   }
   useEffect(hook, [])
+  
+  const showCountry = (country) => {
+    setSelectedCountry(country)
+  }
 
   const filteredCountries = countries.filter(country => 
       country.name.common.toLowerCase().includes(countrySearch.toLowerCase())
@@ -25,9 +34,14 @@ function App() {
 
   return (
     <div>
-      <Search countrySearch={countrySearch} searchHandler={searchHandler}/>
+      <Search 
+        countrySearch={countrySearch} 
+        searchHandler={searchHandler} />
       <div>
-        <FilteredCountries countries={filteredCountries} />
+        <FilteredCountries 
+          countries={filteredCountries} 
+          countryShown={selectedCountry} 
+          showCountry={showCountry}/>
       </div>
     </div>
   );
