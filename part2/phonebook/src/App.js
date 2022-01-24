@@ -48,12 +48,18 @@ const App = () => {
     } else {
       numbersService
         .create(newNameObject)
-        .then(returnedNote => {
+        .then(createdPerson => {
           setNotificationMsg([`Added ${newName}`, 'success'])
           timeoutMsg()
-          setPersons(persons.concat(returnedNote))
+          setPersons(persons.concat(createdPerson))
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          const errJSON = JSON.stringify(error.response.data.error)
+          setNotificationMsg([`New contact validation failed: ${errJSON}`, 'error'])
+          timeoutMsg()
+          console.log(error.response.data)
         })
     }
   }
@@ -71,7 +77,7 @@ const App = () => {
         setNewNumber('')
       })
       .catch(error => {
-        setNotificationMsg([`${person.name} was already deleted`, 'error'])
+        setNotificationMsg([`${person.name} no longer exists`, 'error'])
         timeoutMsg()
         setPersons(persons.filter(p => p.id !== person.id))
       })

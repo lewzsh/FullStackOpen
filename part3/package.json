@@ -2,9 +2,6 @@
   "name": "backend",
   "version": "0.0.1",
   "description": "",
-  "engines": {
-    "node": "16.x"
-  },
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -13,7 +10,8 @@
     "build:ui": "rm -rf build && cd ../part2/notes/ && npm run build && cp -r build ../../part3",
     "deploy": "git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "author": "Lewis",
   "license": "MIT",
@@ -25,6 +23,7 @@
     "mongoose": "^6.1.7"
   },
   "devDependencies": {
+    "eslint": "^8.7.0",
     "nodemon": "^2.0.15"
   }
 }
